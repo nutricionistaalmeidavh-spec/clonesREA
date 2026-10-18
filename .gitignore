@@ -1,0 +1,29 @@
+# APKs e artefatos proprietários — nunca versionar
+*.apk
+*.aab
+*.apks
+*.xapk
+*.dex
+*.jar
+*.keystore
+*.jks
+*.pem
+*.p12
+*.key
+private/
+reports/
+artifacts/
+_reference/
+*.zip
+
+# Ambiente local
+.env
+.env.*
+!.env.example
+node_modules/
+.gradle/
+.idea/
+.vscode/
+*.log
+__pycache__/
+.DS_Store
