@@ -3,6 +3,11 @@ name: Android emulator smoke
 # Manual para evitar consumo de recursos em todo commit.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/android-emulator-smoke.yml'
+      - 'scripts/emulator-smoke.sh'
 
 permissions:
   contents: read
