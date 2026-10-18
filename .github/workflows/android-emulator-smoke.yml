@@ -1,0 +1,43 @@
+name: Android emulator smoke
+
+# Manual para evitar consumo de recursos em todo commit.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android-boot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable KVM for Android emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Start Android 35 and run ADB smoke
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          ram-size: 2048M
+          disable-animations: true
+          emulator-options: -no-window -noaudio -no-boot-anim -no-snapshot-load -no-snapshot-save -gpu swiftshader_indirect -camera-back none -camera-front none
+          script: bash scripts/emulator-smoke.sh
+
+      - name: Attach screenshots (only lab Android, no third-party apps)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-emulator-screenshot
+          path: artifacts/android/*.png
+          if-no-files-found: warn
+          retention-days: 7
